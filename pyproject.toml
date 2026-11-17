@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "outcome-over-tests"
+version = "0.1.0"
+description = "Green tests are not done work: a proof gate and playbook for AI coding agents, judged by real output."
+readme = "README.md"
+license = { text = "MIT" }
+authors = [{ name = "Ravi Shanker Chaturvedi" }]
+keywords = ["ai-agents", "coding-agents", "agent-evaluation", "evals", "verification", "definition-of-done", "llm", "claude-code", "codex", "quality-assurance", "devtools", "playbook", "cli", "python"]
+classifiers = [
+  "Development Status :: 4 - Beta",
+  "Environment :: Console",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: Software Development :: Testing",
+]
+requires-python = ">=3.10"
+dependencies = []
+
+[project.urls]
+Homepage = "https://github.com/Ravishankerchaturvedi/outcome-over-tests"
+Issues = "https://github.com/Ravishankerchaturvedi/outcome-over-tests/issues"
+Changelog = "https://github.com/Ravishankerchaturvedi/outcome-over-tests/blob/main/CHANGELOG.md"
+
+[project.optional-dependencies]
+test = ["pytest"]
+
+[project.scripts]
+proof-check = "proof_check.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["proof_check*"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["."]
