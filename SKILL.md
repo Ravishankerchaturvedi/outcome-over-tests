@@ -20,5 +20,6 @@ description: Judge a task as done by its real output, not by passing tests. Use 
 
 ## Rules
 - A proof that only reports test counts fails.
+- Every listed artifact must be newer than the order; a stale artifact fails.
 - Tests are the regression net, never the definition of done.
 - See PLAYBOOK.md for the full method.

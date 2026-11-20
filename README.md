@@ -32,7 +32,7 @@ proof-check examples/good_proof
 proof-check examples/bad_proof
 ```
 
-Real output of the quickstart above (run on 2026-10-30):
+Real output of the quickstart above (run on 2026-11-20):
 
 ```
 $ proof-check examples/good_proof
@@ -48,7 +48,7 @@ The first prints PASS; the second prints FAIL with reasons.
 
 ## How it works
 
-`proof-check` validates a proof folder: `proof.md` must exist and be non-empty; each "Done means" item in the order must have a matching evidence section in `proof.md`; each listed artifact must exist and be non-empty; and a proof that only reports test counts, with no real output, fails. See [PLAYBOOK.md](PLAYBOOK.md) for the full method.
+`proof-check` validates a proof folder: `proof.md` must exist and be non-empty; each "Done means" item in the order must have a matching evidence section in `proof.md`; each listed artifact must exist, be non-empty, and be newer than the order (an artifact older than the order is stale proof); and a proof that only reports test counts, with no real output, fails. See [PLAYBOOK.md](PLAYBOOK.md) for the full method.
 
 ## Configuration
 
@@ -71,6 +71,7 @@ run_agent_task order.md && proof-check work/proof_folder || echo "not done: see 
 ## Limits
 
 - `proof-check` checks structure and presence only; it cannot judge the quality of the real output. That stays a human step.
+- Newness is judged by file modification times: an artifact must have been written after the order. Editing the order after building the artifacts makes every artifact look stale; rebuild them.
 - Example proof folders are synthetic.
 
 ## About

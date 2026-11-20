@@ -37,10 +37,14 @@ In each case the tests were green and the outcome was not.
 - Each "Done means" item in the order must have a matching evidence section in
   `proof.md`.
 - Each listed artifact must exist and be non-empty.
+- Each listed artifact must be newer than the order: an artifact older than the
+  order is stale proof.
 - A proof that only reports test counts, with no real output, fails.
 
 ## Limits
 
 - `proof-check` checks structure and presence only; it cannot judge the quality of
   the real output. That stays a human step.
+- Newness is judged by file modification times; editing the order after the
+  artifacts makes them all look stale, so rebuild the artifacts.
 - Synthetic examples only.

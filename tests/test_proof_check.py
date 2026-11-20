@@ -1,6 +1,8 @@
 import json
+import os
 import subprocess
 import sys
+import time
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -103,3 +105,34 @@ def test_test_count_only_fails(tmp_path):
     r = run(str(d))
     assert r.returncode == 1
     assert "only reports test counts" in (r.stdout + r.stderr)
+
+
+def test_stale_artifact_older_than_order_fails(tmp_path):
+    d = tmp_path / "p"
+    d.mkdir()
+    out = d / "out.txt"
+    out.write_text("stale content", encoding="utf-8")
+    (d / "order.md").write_text("# O\n\n## Done means\n- x exists\n\n## Artifacts\n- out.txt\n",
+                                encoding="utf-8")
+    (d / "proof.md").write_text("# P\n\n## Evidence: x exists\nreal output here\n\n## Artifacts\n- out.txt\n",
+                                encoding="utf-8")
+    past = time.time() - 3600
+    os.utime(out, (past, past))
+    r = run(str(d))
+    assert r.returncode == 1
+    assert "artifact older than order: out.txt" in (r.stdout + r.stderr)
+
+
+def test_fresh_artifact_newer_than_order_passes(tmp_path):
+    d = tmp_path / "p"
+    d.mkdir()
+    order = d / "order.md"
+    order.write_text("# O\n\n## Done means\n- x exists\n\n## Artifacts\n- out.txt\n",
+                     encoding="utf-8")
+    (d / "proof.md").write_text("# P\n\n## Evidence: x exists\nreal output here\n\n## Artifacts\n- out.txt\n",
+                                encoding="utf-8")
+    past = time.time() - 3600
+    os.utime(order, (past, past))
+    (d / "out.txt").write_text("fresh content", encoding="utf-8")
+    r = run(str(d))
+    assert r.returncode == 0, (r.returncode, r.stdout, r.stderr)

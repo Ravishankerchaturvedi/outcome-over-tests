@@ -169,11 +169,13 @@ def check_proof(proof_dir, order_path=None):
         opath = next((c for c in candidates if c.is_file()), None)
 
     order_text = None
+    order_mtime = None
     if opath is None or not Path(opath).is_file():
         reasons.append("order file not found")
     else:
         try:
             order_text = Path(opath).read_text(encoding="utf-8")
+            order_mtime = Path(opath).stat().st_mtime
         except OSError:
             reasons.append("order file unreadable: %s" % opath)
 
@@ -240,6 +242,23 @@ def check_proof(proof_dir, order_path=None):
                     reasons.append("artifact missing or empty: %s" % art)
             except OSError:
                 reasons.append("artifact missing or empty: %s" % art)
+
+        if order_mtime is not None:
+            try:
+                if art_path.is_dir():
+                    mtimes = [art_path.stat().st_mtime]
+                    for child in art_path.iterdir():
+                        try:
+                            mtimes.append(child.stat().st_mtime)
+                        except OSError:
+                            pass
+                    newest = max(mtimes)
+                else:
+                    newest = art_path.stat().st_mtime
+                if newest < order_mtime:
+                    reasons.append("artifact older than order: %s" % art)
+            except OSError:
+                pass
 
     # real output check: proof must not be test-count-only
     if proof_text.strip():
