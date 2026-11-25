@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "outcome-over-tests"
-version = "0.1.1"
+version = "0.1.2"
 description = "Green tests are not done work: a proof gate and playbook for AI coding agents, judged by real output."
 readme = "README.md"
 license = { text = "MIT" }

@@ -136,3 +136,32 @@ def test_fresh_artifact_newer_than_order_passes(tmp_path):
     (d / "out.txt").write_text("fresh content", encoding="utf-8")
     r = run(str(d))
     assert r.returncode == 0, (r.returncode, r.stdout, r.stderr)
+
+
+def test_snippet_prints_paste_ready_rule():
+    r = run("--snippet")
+    assert r.returncode == 0, (r.returncode, r.stdout, r.stderr)
+    for needle in ("AGENTS.md", "CLAUDE.md", "Done means", "Artifacts",
+                   "proof.md", "Evidence", "proof-check", "PASS"):
+        assert needle in r.stdout, needle
+
+
+def test_snippet_instructions_produce_a_passing_proof(tmp_path):
+    """Follow the printed snippet literally: order first, then work, then proof."""
+    r = run("--snippet")
+    assert r.returncode == 0, (r.returncode, r.stdout, r.stderr)
+    (tmp_path / "order.md").write_text(
+        "# Task\n\n## Done means\n- greeting file exists\n\n## Artifacts\n- greeting.txt\n",
+        encoding="utf-8")
+    (tmp_path / "greeting.txt").write_text("hello\n", encoding="utf-8")
+    (tmp_path / "proof.md").write_text(
+        "# Proof\n\n## Evidence: greeting file exists\n\n```\n$ cat greeting.txt\nhello\n```\n"
+        "\n## Artifacts\n- greeting.txt\n",
+        encoding="utf-8")
+    r2 = run(str(tmp_path))
+    assert r2.returncode == 0, (r2.returncode, r2.stdout, r2.stderr)
+
+
+def test_no_args_is_a_usage_error():
+    r = run()
+    assert r.returncode == 2

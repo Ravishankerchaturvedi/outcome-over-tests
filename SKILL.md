@@ -17,6 +17,8 @@ description: Judge a task as done by its real output, not by passing tests. Use 
 3. Run `proof-check <proof_folder>`. Exit code 0 is PASS. Anything else is FAIL, with one reason per line: fix the
    work, not the proof.
 4. Ask a different agent or a human to open the artifacts before the work is accepted.
+5. To make coding agents follow this method on every task, run `proof-check --snippet` and paste the rule it
+   prints into the repo's `AGENTS.md` (or `CLAUDE.md`).
 
 ## Rules
 - A proof that only reports test counts fails.
